@@ -18,10 +18,10 @@ app.use('/', apiRouter);
 
 // ACCESS TOKEN FUNCTION - Updated to use 'axios'
 async function getAccessToken() {
-  const consumer_key = "GxiDNXAU7392lEX8pRzHenzRSScaH1ce"; // REPLACE IT WITH YOUR CONSUMER KEY
-  const consumer_secret = "JA3Vio2R5g4e7svi"; // REPLACE IT WITH YOUR CONSUMER SECRET
+  const consumer_key = "ogNIHgP7LRN2LjGuKb7ShvCGM6xUHuKubEiiGnmddnNwl7CF"; // REPLACE IT WITH YOUR CONSUMER KEY
+  const consumer_secret = "blg5AHGBAYzV40oJwfeR9pwByUlQb4nj055x8DfwAJzspOq1bRSlaQafuAkgYB5A"; // REPLACE IT WITH YOUR CONSUMER SECRET
   const url =
-    "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
+    "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
   const auth =
     "Basic " +
@@ -41,7 +41,7 @@ async function getAccessToken() {
 }
 
 app.get("/", (req, res) => {
-  res.send("MPESA DARAJA API WITH NODE JS BY UMESKIA SOFTWARES");
+  res.send("MPESA DARAJA API WITH NODE JS BY ESENPI");
   var timeStamp = moment().format("YYYYMMDDHHmmss");
   console.log(timeStamp);
 });
@@ -60,12 +60,12 @@ app.get("/stkpush", (req, res) => {
   getAccessToken()
     .then((accessToken) => {
       const url =
-        "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+        "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
       const timestamp = moment().format("YYYYMMDDHHmmss");
       const password = new Buffer.from(
-        "174379" +
-          "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" +
+        "6723519" +
+          "d61bb261124f727cfad44a8a00708452d517ba453519926f06c102abc298a44f" +
           timestamp
       ).toString("base64");
 
@@ -73,16 +73,16 @@ app.get("/stkpush", (req, res) => {
         .post(
           url,
           {
-            BusinessShortCode: "174379",
+            BusinessShortCode: "6723519",
             Password: password,
             Timestamp: timestamp,
-            TransactionType: "CustomerPayBillOnline",
+            TransactionType: "CustomerBuyGoodsOnline",
             Amount: "1",
-            PartyA: "254768168060",
-            PartyB: "174379",
-            PhoneNumber: "254768168060",
-            CallBackURL: "https://umeskiasoftwares.com/umswifi/callback",
-            AccountReference: "UMESKIA PAY",
+            PartyA: "254743466032",
+            PartyB: "6723519",
+            PhoneNumber: "254743466032",
+            CallBackURL: "https://mydomain.com/b2c/callback",
+            AccountReference: "Esenpi Payments",
             TransactionDesc: "Mpesa Daraja API stk push test",
           },
           {
@@ -112,7 +112,7 @@ app.get("/registerurl", (req, resp) => {
         .post(
           url,
           {
-            ShortCode: "174379",
+            ShortCode: "6723519",
             ResponseType: "Complete",
             ConfirmationURL: "http://example.com/confirmation",
             ValidationURL: "http://example.com/validation",
@@ -161,7 +161,7 @@ app.get("/b2curlrequest", (req, res) => {
             CommandID: "PromotionPayment",
             Amount: "1",
             PartyA: "600996",
-            PartyB: "254768168060",
+            PartyB: "254743466032",
             Remarks: "Withdrawal",
             QueueTimeOutURL: "https://mydomain.com/b2c/queue",
             ResultURL: "https://mydomain.com/b2c/result",

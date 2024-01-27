@@ -25,8 +25,8 @@ const friends=["254740616615","254792434244", "254743466032"]
 //====================================ESENPI==============================================
 async function getAccessToken(cK,cS) {
     // REPLACE IT WITH YOUR CONSUMER SECRET
-    const url =
-      "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
+ const url =
+      "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
   
     const auth =
       "Basic " +
@@ -53,8 +53,9 @@ async function getAccessToken(cK,cS) {
   
   //ACCESS TOKEN ROUTE
   app.get("/access_token", (req, res) => {
-    const consumer_key = "GxiDNXAU7392lEX8pRzHenzRSScaH1ce"; // REPLACE IT WITH YOUR CONSUMER KEY
-    const consumer_secret = "JA3Vio2R5g4e7svi";
+    const consumer_key = "ogNIHgP7LRN2LjGuKb7ShvCGM6xUHuKubEiiGnmddnNwl7CF"; // REPLACE IT WITH YOUR CONSUMER KEY
+    const consumer_secret = "blg5AHGBAYzV40oJwfeR9pwByUlQb4nj055x8DfwAJzspOq1bRSlaQafuAkgYB5A"; // REPLACE IT WITH YOUR CONSUMER SECRET
+   
     getAccessToken(consumer_key,consumer_secret)
       .then((accessToken) => {
         res.send("😀 Your access token is " + accessToken);
@@ -65,38 +66,40 @@ async function getAccessToken(cK,cS) {
   //MPESA STK PUSH ROUTE
   app.post("/stkpush", (req, res) => {
     //=============REQUEST DATA=============
-    const consumer_key = "GxiDNXAU7392lEX8pRzHenzRSScaH1ce"; // REPLACE IT WITH YOUR CONSUMER KEY
-    const consumer_secret = "JA3Vio2R5g4e7svi";
+    const consumer_key = "ogNIHgP7LRN2LjGuKb7ShvCGM6xUHuKubEiiGnmddnNwl7CF"; // REPLACE IT WITH YOUR CONSUMER KEY
+    const consumer_secret = "blg5AHGBAYzV40oJwfeR9pwByUlQb4nj055x8DfwAJzspOq1bRSlaQafuAkgYB5A"; // REPLACE IT WITH YOUR CONSUMER SECRET
+   
     console.log(req.body);
     const r=req.body;
     const amount=r.amount
     const customer=r.customerMSISDN
     //=============REQUEST DATA=============
     getAccessToken(consumer_key,consumer_secret)
-      .then((accessToken) => {
-        const url =
-          "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
-        const auth = "Bearer " + accessToken;
-        const timestamp = moment().format("YYYYMMDDHHmmss");
-        const password = new Buffer.from(
-          "174379" +
-            "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" +
-            timestamp
-        ).toString("base64");
+    .then((accessToken) => {
+      const url =
+        "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+      const auth = "Bearer " + accessToken;
+      const timestamp = moment().format("YYYYMMDDHHmmss");
+      const password = new Buffer.from(
+        "6723519" +
+          "d61bb261124f727cfad44a8a00708452d517ba453519926f06c102abc298a44f" +
+          timestamp
+      ).toString("base64");
+
   
         axios
           .post(
             url,
             {
-              BusinessShortCode: "174379",
+              BusinessShortCode: "6723519",
               Password: password,
               Timestamp: timestamp,
               TransactionType: "CustomerBuyGoodsOnline",
               Amount: amount,
               PartyA: `254${customer}`,
-              PartyB: "174379",
+              PartyB: "6723519",
               PhoneNumber: `254${customer}`,
-              CallBackURL: "https://hiuhu.netlify.app/",
+              CallBackURL: "https://esenpi.onrender.com/callback/",
               AccountReference: "Esenpi",
               TransactionDesc: "Mpesa Daraja API stk push test",
             },
@@ -121,18 +124,21 @@ async function getAccessToken(cK,cS) {
   
   // REGISTER URL FOR C2B
   app.get("/registerurl", (req, resp) => {
-    getAccessToken()
+    const consumer_key = "ogNIHgP7LRN2LjGuKb7ShvCGM6xUHuKubEiiGnmddnNwl7CF"; // REPLACE IT WITH YOUR CONSUMER KEY
+    const consumer_secret = "blg5AHGBAYzV40oJwfeR9pwByUlQb4nj055x8DfwAJzspOq1bRSlaQafuAkgYB5A"; // REPLACE IT WITH YOUR CONSUMER SECRET
+   
+    getAccessToken(consumer_key,consumer_secret)
       .then((accessToken) => {
-        const url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl";
+        const url = "https://api.safaricom.co.ke/mpesa/c2b/v1/registerurl";
         const auth = "Bearer " + accessToken;
         axios
           .post(
             url,
             {
-              ShortCode: "174379",
+              ShortCode: "6723519",
               ResponseType: "Complete",
-              ConfirmationURL: "http://example.com/confirmation",
-              ValidationURL: "http://example.com/validation",
+              ConfirmationURL: "http://192.168.43.178/confirmation",
+              ValidationURL: "http://192.168.43.178/validation",
             },
             {
               headers: {
@@ -157,6 +163,10 @@ async function getAccessToken(cK,cS) {
   });
   
   app.get("/validation", (req, resp) => {
+    console.log("Validating payment");
+    console.log(req.body);
+  });
+  app.get("/callback", (req, resp) => {
     console.log("Validating payment");
     console.log(req.body);
   });
