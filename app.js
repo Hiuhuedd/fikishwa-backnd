@@ -97,7 +97,7 @@ async function getAccessToken(cK,cS) {
               TransactionType: "CustomerBuyGoodsOnline",
               Amount: amount,
               PartyA: `254${customer}`,
-              PartyB: "6723519",
+              PartyB: "4123906",
               PhoneNumber: `254${customer}`,
               CallBackURL: "https://esenpi.onrender.com/callback/",
               AccountReference: "Esenpi",
