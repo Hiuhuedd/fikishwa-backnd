@@ -18,7 +18,8 @@ app.get('/', (req, res) => {
 // Set up a server to listen on port 3000
 const port = 3000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`)
+  
 });
 
 const friends=["254740616615","254792434244", "254743466032"]
@@ -267,14 +268,24 @@ async function registerUrls() {
   });
 
 
+// // Configure the SMTP transporter
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   host: "smtp.gmail.com",
+// port: 587,  // or use other services like SendGrid, SES, etc.
+//   auth: {
+//     user: 'edwardhiuhu623@gmail.com', // your email address
+//     pass: 'bmfw xwwd riwv cetn', // your email password or app-specific password if using Gmail
+//   },
+// });
 // Configure the SMTP transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   host: "smtp.gmail.com",
 port: 587,  // or use other services like SendGrid, SES, etc.
   auth: {
-    user: 'edwardhiuhu623@gmail.com', // your email address
-    pass: 'bmfw xwwd riwv cetn', // your email password or app-specific password if using Gmail
+    user: 'fikishwaconnections@gmail.com', // your email address
+    pass: 'yztx pqvv yajy hxzi', // your email password or app-specific password if using Gmail
   },
 });
 
@@ -455,7 +466,7 @@ app.post('/send-email', validateEmailRequest, async (req, res) => {
     const { userData, driverDetails, locations, times, amount } = req.body;
 
     const mailOptions = {
-      from: 'edwardhiuhu0@gmail.com',
+      from: 'fikishwaconnections@gmail.com',
       to: userData.email,
       subject: 'Fikishwa Taxi - Your Ride Information',
       html: generateEmailHTML(userData, driverDetails, locations, times,amount)
@@ -472,6 +483,105 @@ app.post('/send-email', validateEmailRequest, async (req, res) => {
     console.error('Error sending email:', error);
     res.status(500).json({
       error: 'Failed to send email',
+      details: error.message
+    });
+  }
+});
+
+// Function to generate email HTML for driver status updates
+const generateDriverStatusEmailHTML = (personalInfo, vehicleInfo, status) => {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Status Update</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .header {
+      background: #34D186;
+      padding: 24px;
+      text-align: center;
+    }
+    .header h1 {
+      color: white;
+      font-size: 24px;
+      margin: 0;
+      font-weight: 600;
+    }
+    .content {
+      padding: 32px 24px;
+    }
+    .footer {
+      padding: 24px;
+      text-align: center;
+      background: #f8f9fa;
+      color: #6c757d;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Driver Status Update</h1>
+    </div>
+    <div class="content">
+      <p>Dear ${personalInfo.fullName},</p>
+      <p>Your driver application status is now: <strong>${status}</strong>.</p>
+      <p>Vehicle Information:</p>
+      <ul>
+        <li>Make: ${vehicleInfo.make}</li>
+        <li>Model: ${vehicleInfo.model}</li>
+        <li>Year: ${vehicleInfo.year}</li>
+        <li>Type: ${vehicleInfo.type}</li>
+      </ul>
+      <p>Thank you for being a part of Fikishwa.</p>
+    </div>
+    <div class="footer">
+      <p>Questions? Contact us at support@fikishwa.com</p>
+      <p>© ${new Date().getFullYear()} Fikishwa. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+};
+
+// Endpoint to send driver status update emails
+app.post('/send-driver-status-email', async (req, res) => {
+  try {
+    const { personalInfo, vehicleInfo, status } = req.body;
+
+    const mailOptions = {
+      from: 'fikishwaconnections@gmail.com',
+      to: personalInfo.email,
+      subject: 'Fikishwa - Driver Status Update',
+      html: generateDriverStatusEmailHTML(personalInfo, vehicleInfo, status)
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      message: 'Driver status email sent successfully',
+      messageId: info.messageId
+    });
+
+  } catch (error) {
+    console.error('Error sending driver status email:', error);
+    res.status(500).json({
+      error: 'Failed to send driver status email',
       details: error.message
     });
   }
